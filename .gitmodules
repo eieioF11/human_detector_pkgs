@@ -1,0 +1,9 @@
+[submodule "mono_depth"]
+	path = mono_depth
+	url = https://github.com/eieioF11/mono_depth.git
+[submodule "panodepth_to_pc"]
+	path = panodepth_to_pc
+	url = https://github.com/eieioF11/panodepth_to_pc.git
+[submodule "human_detector"]
+	path = human_detector
+	url = https://github.com/eieioF11/human_detector.git
