@@ -53,6 +53,25 @@ def generate_launch_description():
             output="screen",
             respawn=True,
         ),
+        Node(
+            package='scale_adjuster',
+            executable='scale_adjuster',
+            namespace='',
+            # theta v
+            remappings=[('in_points', '/points'),
+                        ('out_points', '/adjust/points'),],
+            output="screen",
+            respawn=True,
+        ),
+        Node(
+            package='human_detector_core',
+            executable='human_detector_core',
+            namespace='',
+            # theta v
+            remappings=[('in_points', '/human/points'),('scale', '/scale_adjuster/scale')],
+            output="screen",
+            respawn=True,
+        ),
     ]
 
     return LaunchDescription(list)

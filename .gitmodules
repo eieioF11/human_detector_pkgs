@@ -7,3 +7,6 @@
 [submodule "human_detector"]
 	path = human_detector
 	url = https://github.com/eieioF11/human_detector.git
+[submodule "scale_adjuster"]
+	path = scale_adjuster
+	url = https://github.com/eieioF11/scale_adjuster.git
