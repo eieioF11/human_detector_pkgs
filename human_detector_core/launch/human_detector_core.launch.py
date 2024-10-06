@@ -17,6 +17,32 @@ def generate_launch_description():
     pkg_dir = get_package_share_directory('mono_depth')
     list = [
         Node(
+            package="tf2_ros",
+            executable="static_transform_publisher",
+            arguments=[
+                "--x",
+                "0.0",
+                "--y",
+                "0.0",
+                "--z",
+                "0.95",
+                # "1.585",
+                # "1.25",
+                "--yaw",
+                "0.0",
+                # "-1.5707",
+                "--pitch",
+                "0.0",
+                "--roll",
+                "0.0",
+                "--frame-id",
+                "base_link",
+                "--child-frame-id",
+                "camera_link",
+            ],
+            # parameters=[{'use_sim_time': True}]
+        ),
+        Node(
             package='mono_depth',
             executable='mono_depth',
             namespace='',
