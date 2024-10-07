@@ -13,6 +13,12 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+// extention node
+#include "extension_node/extension_node.hpp"
+// common_utils
+#define USE_PCL
+#define USE_ROS2
+#include "common_utils/common_utils.hpp"
 // ROS
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -43,14 +49,14 @@
 
 using namespace std::chrono_literals;
 
-class HumanDetectorCore : public rclcpp::Node
+class HumanDetectorCore : public ext_rclcpp::ExtensionNode
 {
 public:
   HumanDetectorCore(const rclcpp::NodeOptions &options) : HumanDetectorCore("", options) {}
   HumanDetectorCore(
       const std::string &name_space = "",
       const rclcpp::NodeOptions &options = rclcpp::NodeOptions())
-      : rclcpp::Node("human_detector_core_node", name_space, options)
+      : ext_rclcpp::ExtensionNode("human_detector_core_node", name_space, options)
   {
     RCLCPP_INFO(this->get_logger(), "start human_detector_core_node");
     VOXEL_SIZE = param<double>("human_detector_core.voxel_size", 700.0);
@@ -69,7 +75,7 @@ public:
           cloud_header_ = msg->header;
           pcl::PointCloud<pcl::PointXYZ> cloud;
           pcl::fromROSMsg(*msg, cloud);
-          cloud = voxelgrid_filter(cloud, VOXEL_SIZE, VOXEL_SIZE, VOXEL_SIZE);
+          cloud = pcl_utils::voxelgrid_filter(cloud, VOXEL_SIZE, VOXEL_SIZE, VOXEL_SIZE);
           // スケール補正
           // #pragma omp parallel for schedule(dynamic)
           for (auto &p : cloud.points)
@@ -78,7 +84,7 @@ public:
             p.y *= scale_;
             p.z *= scale_;
           }
-          human_cloud_pub_->publish(make_ros_pointcloud2(msg->header, cloud));
+          human_cloud_pub_->publish(ros2_utils::make_ros_pointcloud2(msg->header, cloud));
         });
   }
 
@@ -91,45 +97,4 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr scale_sub_;
   // publisher
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr human_cloud_pub_;
-
-  template <class T>
-  T param(const std::string &name, const T &def)
-  {
-    T value;
-    declare_parameter(name, def);
-    get_parameter(name, value);
-    return value;
-  }
-
-  template <typename POINT_TYPE = pcl::PointXYZ>
-  inline pcl::PointCloud<POINT_TYPE> voxelgrid_filter(const pcl::PointCloud<POINT_TYPE> &input_cloud, double lx, double ly, double lz)
-  {
-    pcl::PointCloud<POINT_TYPE> output_cloud;
-    pcl::ApproximateVoxelGrid<POINT_TYPE> sor;
-    sor.setInputCloud(input_cloud.makeShared());
-    sor.setLeafSize(lx, ly, lz);
-    sor.filter(output_cloud);
-    return output_cloud;
-  }
-
-  template <typename POINT_TYPE = pcl::PointXYZ>
-  inline pcl::PointCloud<POINT_TYPE> passthrough_filter(std::string field, const pcl::PointCloud<POINT_TYPE>& input_cloud, double min,
-                                                           double max) {
-    pcl::PointCloud<POINT_TYPE> output_cloud;
-    pcl::PassThrough<POINT_TYPE> pass;
-    pass.setFilterFieldName(field);
-    pass.setFilterLimits(min, max);
-    pass.setInputCloud(input_cloud.makeShared()); // Set cloud
-    pass.filter(output_cloud);                    // Apply the filter
-    return output_cloud;
-  }
-
-  template <typename POINT_TYPE = pcl::PointXYZ>
-  inline sensor_msgs::msg::PointCloud2 make_ros_pointcloud2(std_msgs::msg::Header header, const pcl::PointCloud<POINT_TYPE> &cloud)
-  {
-    sensor_msgs::msg::PointCloud2 cloud_msg;
-    pcl::toROSMsg(cloud, cloud_msg);
-    cloud_msg.header = header;
-    return cloud_msg;
-  }
 };
