@@ -57,6 +57,7 @@ public:
     VOXEL_SIZE                = param<double>("human_detector_core.voxel_size", 700.0);
     CLUSTER_TOLERANCE         = param<double>("human_detector_core.cluster_tolerance", 0.5);
     MIN_CLUSTER_SIZE          = param<int>("human_detector_core.min_cluster_size", 50);
+    box_size_                 = param<std::vector<double>>("human_detector_core.box_size", {0.5, 1.5, 0.5});
     std::string LOG_LEVEL_STR = param<std::string>("human_detector_core.log_level", "DEBUG"); // DEBUG, INFO, WARN, ERROR, NONE
     logger.set_log_level(ext::get_log_level(LOG_LEVEL_STR));
     human_cloud_pub_  = this->create_publisher<sensor_msgs::msg::PointCloud2>("human_detector_core/human_cloud", rclcpp::QoS(10));
@@ -84,7 +85,7 @@ public:
           int id                         = 0;
           std_msgs::msg::ColorRGBA color = ros2_utils::make_color(0.0, 0.0, 1.0, 0.5);
           visualization_msgs::msg::MarkerArray marker_array;
-          #pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(dynamic)
           for (const auto& cluster : clusters) {
             // calc inner product
             std::vector<double> x, y, z;
@@ -102,7 +103,7 @@ public:
             std::cout << "," << y_median << ",";
             std::cout << z_median << std::endl;
 
-            geometry_msgs::msg::Vector3 size       = ros2_utils::make_geometry_vector3(0.5, 1.5, 0.5);
+            geometry_msgs::msg::Vector3 size       = ros2_utils::make_geometry_vector3(box_size_[0], box_size_[1], box_size_[2]);
             geometry_msgs::msg::Vector3 pos        = ros2_utils::make_geometry_vector3(x_median, y_median, z_median);
             visualization_msgs::msg::Marker marker = ros2_utils::make_area_maker(cloud_header_, pos, size, id, color);
             marker.ns                              = "human";
@@ -118,6 +119,7 @@ private:
   double CLUSTER_TOLERANCE;
   int MIN_CLUSTER_SIZE;
   double scale_;
+  std::vector<double> box_size_{0.5, 1.5, 0.5};
   std_msgs::msg::Header cloud_header_;
   // log
   ext::Logger logger;

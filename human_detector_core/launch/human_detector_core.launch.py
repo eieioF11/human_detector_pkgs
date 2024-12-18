@@ -57,7 +57,8 @@ def generate_launch_description():
             executable='depth_human_detector',
             namespace='',
             # theta v
-            remappings=[('image_raw', '/thetav/image_raw'),('depth', '/mono_depth/depth')],
+            remappings=[('image_raw', '/thetav/image_raw'),
+                        ('depth', '/mono_depth/depth')],
             output="screen",
             respawn=True,
         ),
@@ -94,7 +95,8 @@ def generate_launch_description():
             executable='human_detector_core',
             namespace='',
             # theta v
-            remappings=[('in_points', '/human/points'),('scale', '/scale_adjuster/scale')],
+            remappings=[('in_points', '/human/points'),
+                        ('scale', '/scale_adjuster/scale')],
             output="screen",
             respawn=True,
         ),
