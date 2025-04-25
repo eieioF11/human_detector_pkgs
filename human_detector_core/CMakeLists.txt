@@ -36,6 +36,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE ${PCL_DEFINITIONS})
 
 install(DIRECTORY
   launch
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
