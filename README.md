@@ -2,6 +2,9 @@
 Human Detection Package. \
 Tested on Ubuntu 22.04,ros2 humble.
 
+## System Configuration
+![alt text](images/detector.svg)
+
 # Installation
 ## ros2_common_tools Installation
 ```
