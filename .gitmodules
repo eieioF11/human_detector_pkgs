@@ -7,3 +7,6 @@
 [submodule "omnivision"]
 	path = omnivision
 	url = https://github.com/eieioF11/omnivision.git
+[submodule "omnivision_cpp"]
+	path = omnivision_cpp
+	url = https://github.com/eieioF11/omnivision_cpp.git
