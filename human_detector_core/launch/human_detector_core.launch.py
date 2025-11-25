@@ -40,11 +40,13 @@ def generate_launch_description():
                 "--child-frame-id",
                 "camera_link",
             ],
-            # parameters=[{'use_sim_time': True}]
+            parameters=[{'use_sim_time': True}]
         ),
         Node(
-            package='omnivision',
-            executable='fusion',
+            package='omnivision_cpp',
+            executable='omnivision_cpp',
+            # package='omnivision',
+            # executable='fusion',
             name='fuser',
             output='screen',
             parameters=[
@@ -65,6 +67,29 @@ def generate_launch_description():
                 }
             ]
         ),
+        # Node(
+        #     package='omnivision',
+        #     executable='fusion',
+        #     name='fuser',
+        #     output='screen',
+        #     parameters=[
+        #         {
+        #             #mid360 and ThetaV on Go2
+        #             'transformation_matrix': [
+        #                 1, 0, 0, 0.090,
+        #                 0, 1, 0, 0,
+        #                 0, 0, 1, -0.135,
+        #                 0, 0, 0, 1.0
+        #             ],
+        #             'pointcloud_topic': '/livox/lidar',
+        #             'image_topic': '/thetav/image_raw',
+        #             'depth_map': '/omnivision/depth',
+        #             'texturized_pointcloud': '/omnivision/textured_pointcloud',
+        #             'texturized_depth_map': '/omnivision/texturized_depth_map',
+        #             'image_overlay': '/omnivision/image_overlay'
+        #         }
+        #     ]
+        # ),
         # Node(
         #     package='mono_depth',
         #     executable='mono_depth',
